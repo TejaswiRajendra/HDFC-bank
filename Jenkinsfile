@@ -10,7 +10,7 @@ pipeline {
         stage('Deploy HTML') {
             steps {
                 echo 'Deploying HTML files...'
-                sh './deploy-html.sh'
+                sh './finance-html.sh'
             }
         }
     }
