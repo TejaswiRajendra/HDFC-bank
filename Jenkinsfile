@@ -29,7 +29,7 @@ pipeline {
         }
         stage('Deploy') {
             when {
-                branch 'main' // Deploy only from the main branch
+                branch 'Financial_services' // Deploy only from the main branch
             }
             steps {
                 echo 'Deploying HTML files...'
