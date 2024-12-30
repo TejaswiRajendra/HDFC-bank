@@ -1,39 +1,37 @@
 pipeline {
     agent any
 
-    options {
-        skipDefaultCheckout() // Avoids checking out code by default
-    }
-
     stages {
-        stage('Checkout') {
+        stage('Checkout Code') {
             steps {
-                // Checkout the current branch from the GitHub repository
+                // Checkout the code from your repository
                 checkout scm
             }
         }
         stage('Lint HTML') {
             steps {
                 echo 'Linting HTML files...'
-                // Use an HTML linter like tidy (ensure it's installed on the agent)
-                sh 'tidy -errors *.html || true'
+                // Using htmlhint for linting (ensure Node.js and htmlhint are installed)
+                sh '''
+                if ! command -v htmlhint &> /dev/null; then
+                    echo "htmlhint not found. Installing..."
+                    npm install -g htmlhint
+                fi
+                htmlhint *.html || echo "Linting completed with warnings/errors."
+                '''
             }
         }
         stage('Test HTML') {
             steps {
-                echo 'Running tests on HTML files...'
-                // Example: Use a custom script or tool for testing
-                // Replace this with your specific testing commands
-                sh './run-html-tests.sh'
+                echo 'Testing HTML files...'
+                // Replace with actual HTML testing commands or scripts
+                sh './test-html.sh'
             }
         }
-        stage('Deploy') {
-            when {
-                branch 'Financial_services' // Deploy only from the main branch
-            }
+        stage('Package or Deploy') {
             steps {
-                echo 'Deploying HTML files...'
-                // Deploy to a server or hosting service
+                echo 'Packaging or Deploying HTML files...'
+                // Example deployment to a web server
                 sh './deploy-html.sh'
             }
         }
@@ -41,8 +39,8 @@ pipeline {
 
     post {
         always {
-            echo 'Cleaning up...'
-            cleanWs() // Clean workspace after pipeline execution
+            echo 'Cleaning workspace...'
+            cleanWs()
         }
         success {
             echo 'Pipeline completed successfully!'
@@ -52,6 +50,5 @@ pipeline {
         }
     }
 }
-
 
          
